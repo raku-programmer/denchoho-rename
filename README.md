@@ -113,6 +113,6 @@
 
 ## 作者
 
-楽するプログラマSさん — [note](https://note.com/meteor_200/n/nafc5e6d1bba5)
+楽するプログラマSさん — [note](https://note.com/meteor_200)
 
 手作業を減らすことを仕事にしています。「この作業、自動化できますか？」という相談も受けています。
