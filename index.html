@@ -1,742 +1,646 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>請求書PDF 一括リネーム｜ブラウザ内で完結</title>
-    <meta
-      name="description"
-      content="請求書などのPDFを、取引年月日・取引先・金額を含むファイル名に一括でリネームしてZIPでまとめます。ファイルはブラウザの外に送信されません。"
-    />
-    <style>
-      :root {
-        --paper: #ffffff;
-        --paper-2: #f4f6f3;
-        --ink: #1b2620;
-        --ink-soft: #5a685f;
-        --moss: #3c5a48;
-        --indigo: #4740be;
-        --mustard: #b98a12;
-        --line: #dce2d8;
-        --danger: #a32d2d;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        background: var(--paper);
-        color: var(--ink);
-        font-family:
-          "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo,
-          system-ui, sans-serif;
-        font-size: 15px;
-        line-height: 1.8;
-      }
-      .wrap {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 32px 20px 80px;
-      }
-      h1 {
-        font-size: 22px;
-        margin: 0 0 6px;
-        letter-spacing: 0.01em;
-      }
-      .sub {
-        color: var(--ink-soft);
-        font-size: 14px;
-        margin: 0 0 20px;
-      }
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>請求書PDF 一括リネーム｜ブラウザ内で完結</title>
+<meta name="description" content="請求書などのPDFを、取引年月日・取引先・金額を含むファイル名に一括でリネームしてZIPでまとめます。ファイルはブラウザの外に送信されません。">
+<style>
+:root{
+  --paper:#FFFFFF;
+  --paper-2:#F4F6F3;
+  --ink:#1B2620;
+  --ink-soft:#5A685F;
+  --moss:#3C5A48;
+  --indigo:#4740BE;
+  --mustard:#B98A12;
+  --line:#DCE2D8;
+  --danger:#A32D2D;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif;
+  font-size:15px;line-height:1.8;
+}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 20px 80px}
+h1{font-size:22px;margin:0 0 6px;letter-spacing:.01em}
+.sub{color:var(--ink-soft);font-size:14px;margin:0 0 20px}
 
-      .trust {
-        background: var(--paper-2);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        padding: 14px 16px;
-        margin: 0 0 14px;
-        font-size: 13.5px;
-        line-height: 1.75;
-      }
-      .trust b {
-        color: var(--moss);
-      }
-      .trust code {
-        background: #fff;
-        border: 1px solid var(--line);
-        border-radius: 4px;
-        padding: 1px 6px;
-        font-size: 12.5px;
-      }
-      .notice {
-        border-left: 3px solid var(--mustard);
-        background: #fcf8ec;
-        padding: 10px 14px;
-        margin: 0 0 24px;
-        font-size: 13px;
-        color: #5c4a18;
-      }
+.trust{
+  background:var(--paper-2);border:1px solid var(--line);border-radius:10px;
+  padding:14px 16px;margin:0 0 14px;font-size:13.5px;line-height:1.75;
+}
+.trust b{color:var(--moss)}
+.trust code{
+  background:#fff;border:1px solid var(--line);border-radius:4px;
+  padding:1px 6px;font-size:12.5px;
+}
+.notice{
+  border-left:3px solid var(--mustard);background:#FCF8EC;
+  padding:10px 14px;margin:0 0 24px;font-size:13px;color:#5C4A18;
+}
 
-      #drop {
-        border: 2px dashed var(--line);
-        border-radius: 12px;
-        background: var(--paper-2);
-        padding: 40px 20px;
-        text-align: center;
-        cursor: pointer;
-        transition: 0.15s;
-      }
-      #drop:hover,
-      #drop.over {
-        border-color: var(--indigo);
-        background: #f2f1fc;
-      }
-      #drop strong {
-        display: block;
-        font-size: 16px;
-        margin-bottom: 4px;
-      }
-      #drop span {
-        color: var(--ink-soft);
-        font-size: 13px;
-      }
+#drop{
+  border:2px dashed var(--line);border-radius:12px;background:var(--paper-2);
+  padding:40px 20px;text-align:center;cursor:pointer;transition:.15s;
+}
+#drop:hover,#drop.over{border-color:var(--indigo);background:#F2F1FC}
+#drop strong{display:block;font-size:16px;margin-bottom:4px}
+#drop span{color:var(--ink-soft);font-size:13px}
 
-      .bar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 14px;
-        align-items: center;
-        margin: 22px 0 12px;
-        padding-bottom: 14px;
-        border-bottom: 1px solid var(--line);
+.bar{
+  display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+  margin:22px 0 12px;padding-bottom:14px;border-bottom:1px solid var(--line);
+}
+.bar label{font-size:13px;color:var(--ink-soft)}
+.bar input[type=text]{
+  border:1px solid var(--line);border-radius:6px;padding:7px 10px;
+  font-size:14px;font-family:inherit;width:130px;
+}
+.count{font-size:13px;color:var(--ink-soft);margin-right:auto}
+button{
+  font-family:inherit;font-size:14px;border-radius:8px;cursor:pointer;
+  border:1px solid transparent;padding:9px 18px;
+}
+.primary{background:var(--indigo);color:#fff}
+.primary:disabled{background:#C6C4E6;cursor:not-allowed}
+.ghost{background:#fff;border-color:var(--line);color:var(--ink)}
+.ghost:hover{border-color:var(--moss)}
+
+.cols{display:grid;grid-template-columns:1fr 420px;gap:24px;align-items:start}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{
+  text-align:left;font-weight:500;color:var(--ink-soft);font-size:12px;
+  padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap;
+}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle}
+td input{
+  border:1px solid var(--line);border-radius:6px;padding:6px 8px;
+  font-size:13.5px;font-family:inherit;width:100%;
+}
+td input:focus{outline:2px solid var(--indigo);outline-offset:-1px;border-color:transparent}
+td input.bad,.bar input.bad{border-color:var(--danger);background:#FDF3F3}
+/* 自動で入れた候補。人が目を通すまで色を残す */
+td input.guess{background:#FCF8EC;border-color:var(--mustard)}
+td input.guess.bad{background:#FDF3F3;border-color:var(--danger)}
+.tag{
+  display:inline-block;font-size:10.5px;line-height:1.6;color:var(--mustard);
+  border:1px solid var(--mustard);border-radius:4px;padding:0 4px;margin-left:6px;
+  vertical-align:1px;
+}
+.tag.hide{display:none}
+.reading{font-size:12px;color:var(--ink-soft)}
+.src{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-soft);font-size:12.5px}
+.out{font-size:12px;color:var(--moss);word-break:break-all;line-height:1.5}
+.out.ng{color:var(--danger)}
+.w-date{width:140px}.w-amt{width:110px}
+.mini{
+  background:none;border:none;color:var(--indigo);font-size:12px;
+  padding:2px 4px;text-decoration:underline;
+}
+.mini.del{color:var(--danger)}
+
+#pane{position:sticky;top:20px}
+#pane h2{font-size:13px;color:var(--ink-soft);font-weight:500;margin:0 0 8px}
+#frame{width:100%;height:560px;border:1px solid var(--line);border-radius:10px;background:var(--paper-2)}
+#empty{
+  height:560px;border:1px dashed var(--line);border-radius:10px;background:var(--paper-2);
+  display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:13px;
+}
+.hide{display:none !important}
+.hint{font-size:12.5px;color:var(--ink-soft);margin:-4px 0 16px}
+.hint kbd{
+  border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;
+  padding:0 5px;font-family:inherit;font-size:11.5px;background:var(--paper-2);
+}
+footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-soft)}
+footer a{color:var(--indigo)}
+@media(max-width:900px){
+  .cols{grid-template-columns:1fr}
+  #pane{position:static}
+  #frame,#empty{height:420px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>請求書PDF 一括リネーム</h1>
+<p class="sub">取引年月日・取引先・金額をファイル名に付けて、まとめてZIPで書き出します。</p>
+
+<div class="trust">
+  <b>このページは、選んだPDFをどこにも送信しません。</b><br>
+  ファイルの読み込みも、日付・金額の読み取りも、リネームもZIP化も、すべてお使いのブラウザの中だけで行われます。<br>
+  確かめ方：<code>F12</code> で開発者ツールを開き、ネットワークタブを見ながら操作してください。ページを開いた直後に読み込むライブラリ（PDF解析・ZIP作成）以外の通信は発生しません。
+</div>
+
+<div class="notice">
+  検索要件を満たすファイル名を付けるための補助ツールです。電子帳簿保存法への対応が完了することを保証するものではありません。真実性の確保（事務処理規程やタイムスタンプ等）は別途ご確認ください。命名の順序や区切り方は社内ルールに合わせてください。
+</div>
+
+<div id="drop" tabindex="0" role="button" aria-label="PDFファイルを選択">
+  <strong>PDFをここにドラッグ＆ドロップ</strong>
+  <span>クリックしてファイルを選ぶこともできます（複数選択可）</span>
+</div>
+<input type="file" id="picker" accept="application/pdf" multiple hidden>
+
+<div class="bar hide" id="bar">
+  <span class="count" id="count"></span>
+  <span class="reading hide" id="reading"></span>
+  <label>書類の種類
+    <input type="text" id="doctype" value="請求書" placeholder="任意">
+  </label>
+  <button class="ghost" id="clear">すべて削除</button>
+  <button class="primary" id="zip" disabled>リネームしてZIPで保存</button>
+</div>
+
+<p class="hint hide" id="hint">
+  入力欄では <kbd>↑</kbd><kbd>↓</kbd> で上下の行へ、<kbd>←</kbd><kbd>→</kbd> で左右の項目へ移動できます。<kbd>Enter</kbd> でも下の行に進みます。<br>
+  日付と金額は、PDFから読み取れた場合に候補を入れています（<span class="tag" style="margin-left:0">推定</span> が付いた欄）。<b>必ず当たるわけではありません。</b>PDFを表示して確認し、違っていれば書き換えてください。その欄に一度入ると印は消えます。
+</p>
+
+<div class="cols hide" id="cols">
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th>元のファイル名</th>
+          <th>取引年月日</th>
+          <th>取引先</th>
+          <th>金額</th>
+          <th>新しいファイル名</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <div id="pane">
+    <h2>プレビュー</h2>
+    <iframe id="frame" class="hide" title="PDFプレビュー"></iframe>
+    <div id="empty">「表示」を押すとPDFの中身が出ます</div>
+  </div>
+</div>
+
+<footer>
+  作成：楽するプログラマSさん ／ ソースはこのページの表示ソースがすべてです。<br>
+  大量のPDFを一度に処理するとブラウザのメモリを消費します。100件を超える場合は分けて実行してください。
+</footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+// ===== PDFから日付と金額の候補を拾う =====
+// あくまで「候補」。当たらないことも普通にあるので、
+// 拾えなければ空欄のままにして、無理に埋めない。
+// 取引先は請求元と請求先の区別がつかないため、対象にしていない。
+
+// 発行日として扱いたい語 / 逆に避けたい語
+const DATE_GOOD = /(発行日|請求日|作成日|請求年月日|取引年月日|日\s*付)/g;
+const DATE_BAD  = /(支払期限|お支払期日|支払期日|振込期限|納期|期限)/g;
+const AMOUNT_KEY = /(合計金額|ご請求金額|請求金額|お支払金額|請求額|合\s*計|総\s*額)/g;
+
+async function extractHints(file) {
+  if (!window.pdfjsLib) return {};
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+  // 1ページ目だけ見る。請求書は表紙に必要な情報が載っている前提
+  const page = await pdf.getPage(1);
+  const content = await page.getTextContent();
+  const text = content.items.map(i => i.str).join(' ');
+  pdf.destroy();
+  return { date: guessDate(text), amount: guessAmount(text) };
+}
+
+// 近くにキーワードがあるほど点が高い、という単純な採点
+function score(text, pos, good, bad) {
+  let s = 0;
+  for (const re of [good, bad]) {
+    re.lastIndex = 0;
+    let m;
+    while ((m = re.exec(text)) !== null) {
+      const d = Math.abs(m.index - pos);
+      if (d < 40) s += (re === good ? 1 : -1) * (40 - d);
+    }
+  }
+  return s;
+}
+
+function guessDate(text) {
+  const found = [];
+  const push = (y, m, d, pos) => {
+    if (!y || !m || !d) return;
+    const s = String(y) + String(m).padStart(2, '0') + String(d).padStart(2, '0');
+    if (isRealDate(s)) found.push({ v: s, pos });
+  };
+
+  // 2026年7月28日 / 2026/7/28 / 2026-07-28 / 2026.7.28
+  let re = /(\d{4})\s*[年\/\-\.]\s*(\d{1,2})\s*[月\/\-\.]\s*(\d{1,2})/g, m;
+  while ((m = re.exec(text)) !== null) push(+m[1], +m[2], +m[3], m.index);
+
+  // 令和8年7月28日 / R8.7.28
+  re = /(?:令和|R)\s*(\d{1,2})\s*[年\/\-\.]\s*(\d{1,2})\s*[月\/\-\.]\s*(\d{1,2})/g;
+  while ((m = re.exec(text)) !== null) push(2018 + +m[1], +m[2], +m[3], m.index);
+
+  if (!found.length) return '';
+  // キーワードの近さで選ぶ。同点なら文書の先頭に近いほう
+  found.forEach(f => { f.s = score(text, f.pos, DATE_GOOD, DATE_BAD); });
+  found.sort((a, b) => b.s - a.s || a.pos - b.pos);
+  return found[0].v;
+}
+
+function guessAmount(text) {
+  const found = [];
+  // ¥1,100,000 / 1,100,000円 / 1100000円 のような、区切りか単位のあるものだけ拾う。
+  // ただの連番を金額と誤認しないための制約。
+  const re = /[¥￥]\s*([0-9][0-9,]{2,})|([0-9][0-9,]{2,})\s*円/g;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    const raw = (m[1] || m[2]).replace(/,/g, '');
+    if (!/^\d+$/.test(raw)) continue;
+    found.push({ v: raw, pos: m.index, n: +raw });
+  }
+  if (!found.length) return '';
+  // 「合計」等の近くを優先し、並んだら金額が大きいほう（小計より合計）
+  found.forEach(f => { f.s = score(text, f.pos, AMOUNT_KEY, /(?!)/g); });
+  found.sort((a, b) => b.s - a.s || b.n - a.n);
+  return found[0].v;
+}
+</script>
+<script>
+// ===== 状態 =====
+// items: 読み込んだPDFの一覧。file本体とユーザー入力値だけを持つ。
+// 外部に送信する処理はこのファイル内に一切存在しない。
+let items = [];
+let seq = 0;
+
+const $ = id => document.getElementById(id);
+const drop = $('drop'), picker = $('picker'), rows = $('rows');
+const bar = $('bar'), cols = $('cols'), frame = $('frame'), empty = $('empty');
+
+// ===== ファイル受け取り =====
+drop.addEventListener('click', () => picker.click());
+drop.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); picker.click(); }
+});
+picker.addEventListener('change', e => { addFiles(e.target.files); picker.value = ''; });
+
+['dragenter','dragover'].forEach(ev =>
+  drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev =>
+  drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+
+function addFiles(list) {
+  const pdfs = [...list].filter(f => f.type === 'application/pdf' || /\.pdf$/i.test(f.name));
+  if (!pdfs.length) { alert('PDFファイルが見つかりませんでした。'); return; }
+  const added = [];
+  pdfs.forEach(file => {
+    const item = {
+      id: ++seq, file, url: null,
+      date: '', partner: '', amount: '',
+      guess: { date: false, amount: false }
+    };
+    items.push(item);
+    added.push(item);
+    rows.appendChild(buildRow(item));
+  });
+  refresh();
+  readAll(added);
+}
+
+// 読み取りは1件ずつ順番に。まとめて走らせるとメモリを一気に使うため。
+// 途中で失敗しても、その1件を空欄のまま飛ばして次に進む。
+let reading = 0;
+async function readAll(list) {
+  reading += list.length;
+  updateReading();
+  for (const item of list) {
+    try {
+      const hints = await extractHints(item.file);
+      if (items.includes(item)) item.applyHints(hints);
+    } catch (e) {
+      console.warn('読み取りに失敗しました:', item.file.name, e);
+    }
+    reading--;
+    updateReading();
+    refresh();
+  }
+}
+
+function updateReading() {
+  const el = $('reading');
+  if (reading > 0) {
+    el.textContent = `読み取り中… 残り${reading}件`;
+    el.classList.remove('hide');
+  } else {
+    el.classList.add('hide');
+  }
+}
+
+// ===== 1行分のDOMを作る =====
+// 入力のたびに全体を再描画すると入力欄からフォーカスが外れるので、
+// 行は一度だけ作り、以降は必要なセルだけ書き換える。
+function buildRow(item) {
+  const tr = document.createElement('tr');
+
+  const tdSrc = document.createElement('td');
+  tdSrc.className = 'src';
+  tdSrc.textContent = item.file.name;
+  tdSrc.title = item.file.name;
+
+  const tdDate = document.createElement('td');
+  const inDate = document.createElement('input');
+  inDate.type = 'text'; inDate.className = 'w-date';
+  inDate.inputMode = 'numeric'; inDate.maxLength = 8;
+  inDate.placeholder = '20260728';
+  const tagDate = document.createElement('span');
+  tagDate.className = 'tag hide'; tagDate.textContent = '推定';
+  tdDate.append(inDate, tagDate);
+
+  const tdPartner = document.createElement('td');
+  const inPartner = document.createElement('input');
+  inPartner.type = 'text'; inPartner.placeholder = '株式会社○○';
+  tdPartner.appendChild(inPartner);
+
+  const tdAmount = document.createElement('td');
+  const inAmount = document.createElement('input');
+  inAmount.type = 'text'; inAmount.className = 'w-amt';
+  inAmount.inputMode = 'numeric'; inAmount.placeholder = '110000';
+  const tagAmount = document.createElement('span');
+  tagAmount.className = 'tag hide'; tagAmount.textContent = '推定';
+  tdAmount.append(inAmount, tagAmount);
+
+  const tdOut = document.createElement('td');
+  const out = document.createElement('div');
+  out.className = 'out';
+  tdOut.appendChild(out);
+
+  const tdAct = document.createElement('td');
+  const btnView = document.createElement('button');
+  btnView.className = 'mini'; btnView.textContent = '表示';
+  btnView.onclick = () => preview(item);
+  const btnDel = document.createElement('button');
+  btnDel.className = 'mini del'; btnDel.textContent = '削除';
+  btnDel.onclick = () => remove(item, tr);
+  tdAct.append(btnView, btnDel);
+
+  const fields = { date: inDate, partner: inPartner, amount: inAmount };
+
+  const sync = () => {
+    // 日付と金額は数字だけを残す。ハイフン付きで貼り付けても通るようにする
+    const d = inDate.value.replace(/[^0-9]/g, '').slice(0, 8);
+    if (inDate.value !== d) inDate.value = d;
+    const a = inAmount.value.replace(/[^0-9]/g, '');
+    if (inAmount.value !== a) inAmount.value = a;
+    item.date = d;
+    item.partner = inPartner.value;
+    item.amount = a;
+    paint();
+    refresh();
+  };
+
+  const paint = () => {
+    const r = validate(item);
+    out.textContent = r.name || r.msg;
+    out.classList.toggle('ng', !r.name);
+    Object.keys(fields).forEach(key =>
+      fields[key].classList.toggle('bad', r.field === key));
+  };
+  item.paint = paint;
+
+  [inDate, inPartner, inAmount].forEach(el => el.addEventListener('input', sync));
+
+  // 推定値は、人がその欄に入ったら「見た」とみなして印を外す。
+  // ボタンを増やさずに、確認を1回はさむための仕組み。
+  const confirmGuess = key => {
+    if (!item.guess[key]) return;
+    item.guess[key] = false;
+    (key === 'date' ? inDate : inAmount).classList.remove('guess');
+    (key === 'date' ? tagDate : tagAmount).classList.add('hide');
+    refresh();
+  };
+  inDate.addEventListener('focus', () => confirmGuess('date'));
+  inAmount.addEventListener('focus', () => confirmGuess('amount'));
+
+  // 読み取り結果を流し込む（非同期で後から届く）
+  item.applyHints = hints => {
+    if (hints.date && !item.date) {
+      inDate.value = hints.date; item.date = hints.date;
+      item.guess.date = true;
+      inDate.classList.add('guess'); tagDate.classList.remove('hide');
+    }
+    if (hints.amount && !item.amount) {
+      inAmount.value = hints.amount; item.amount = hints.amount;
+      item.guess.amount = true;
+      inAmount.classList.add('guess'); tagAmount.classList.remove('hide');
+    }
+    paint();
+  };
+
+  paint();
+  tr.append(tdSrc, tdDate, tdPartner, tdAmount, tdOut, tdAct);
+  return tr;
+}
+
+// ===== 入力チェックとファイル名の組み立て =====
+// 問題がなければ {name}、あれば {msg, field} を返す。
+// 使えない文字を黙って別の文字に置き換えると、取引先名が知らないうちに
+// 変わってしまい、あとで検索できなくなる。だから置換せずエラーで止める。
+const BAD_CHARS = /[\\\/:\*\?"<>\|]/;
+const CTRL_CHARS = /[\x00-\x1f\x7f]/;
+
+function validate(item) {
+  const partner = trimBoth(item.partner);
+  const doctype = trimBoth($('doctype').value);
+
+  if (!item.date && !partner && !item.amount) {
+    return { msg: '3項目を入力してください' };
+  }
+  if (item.date.length !== 8) {
+    return { msg: '取引年月日は8桁で入力してください（例 20260728）', field: 'date' };
+  }
+  if (!isRealDate(item.date)) {
+    return { msg: 'その日付は存在しません', field: 'date' };
+  }
+  if (!partner) {
+    return { msg: '取引先を入力してください', field: 'partner' };
+  }
+  const partnerError = charError(partner);
+  if (partnerError) {
+    return { msg: '取引先' + partnerError, field: 'partner' };
+  }
+  if (!item.amount) {
+    return { msg: '金額を入力してください', field: 'amount' };
+  }
+  const doctypeError = doctype && charError(doctype);
+  if (doctypeError) {
+    return { msg: '書類の種類' + doctypeError, field: 'doctype' };
+  }
+
+  const parts = [item.date, partner, item.amount];
+  if (doctype) parts.push(doctype);
+  return { name: parts.join('_') + '.pdf' };
+}
+
+// ファイル名として成立しない文字が混じっていないか調べる
+function charError(s) {
+  const bad = s.match(BAD_CHARS);
+  if (bad) return `に「${bad[0]}」は使えません（ \\ / : * ? " < > | は不可）`;
+  if (CTRL_CHARS.test(s)) return 'に使えない制御文字が含まれています';
+  if (/[.]$/.test(s)) return 'の末尾にピリオドは使えません';
+  return '';
+}
+
+// 半角・全角どちらの空白も前後から取り除く
+function trimBoth(s) {
+  return s.replace(/^[\s\u3000]+|[\s\u3000]+$/g, '');
+}
+
+// 20260231 のような存在しない日付をはじく
+function isRealDate(s) {
+  const y = +s.slice(0, 4), m = +s.slice(4, 6), d = +s.slice(6, 8);
+  const dt = new Date(y, m - 1, d);
+  return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d;
+}
+
+// ===== プレビュー =====
+// blob URLをiframeに渡すだけ。ブラウザ内蔵のPDFビューアが表示してくれる。
+function preview(item) {
+  if (!item.url) item.url = URL.createObjectURL(item.file);
+  frame.src = item.url;
+  frame.classList.remove('hide');
+  empty.classList.add('hide');
+}
+
+function remove(item, tr) {
+  if (item.url) URL.revokeObjectURL(item.url);
+  items = items.filter(x => x.id !== item.id);
+  tr.remove();
+  refresh();
+}
+
+$('clear').onclick = () => {
+  if (items.length && !confirm('読み込んだファイルをすべて取り消します。よろしいですか？')) return;
+  items.forEach(i => i.url && URL.revokeObjectURL(i.url));
+  items = []; rows.innerHTML = '';
+  frame.src = 'about:blank'; frame.classList.add('hide'); empty.classList.remove('hide');
+  refresh();
+};
+
+// 書類の種類は全行のファイル名に効くので、変えたら全部検査し直す
+$('doctype').addEventListener('input', () => {
+  items.forEach(i => i.paint());
+  refresh();
+});
+
+// ===== キーボードでのセル移動 =====
+// 入力欄がある列は 1=取引年月日 / 2=取引先 / 3=金額。
+// 上下は常に行移動。左右はカーソルが端にあるときだけ列移動する
+// （文字の途中では、通常どおりカーソルが動くほうが自然なため）。
+const FIRST_COL = 1, LAST_COL = 3;
+
+function focusCell(rowIdx, colIdx) {
+  const tr = rows.children[rowIdx];
+  if (!tr) return;
+  const input = tr.children[colIdx] && tr.children[colIdx].querySelector('input');
+  if (!input) return;
+  input.focus();
+  if (input.type === 'text') input.select();
+}
+
+rows.addEventListener('keydown', e => {
+  const el = e.target;
+  if (el.tagName !== 'INPUT') return;
+
+  const tr = el.closest('tr');
+  const td = el.closest('td');
+  const rowIdx = [...rows.children].indexOf(tr);
+  const colIdx = [...tr.children].indexOf(td);
+  const isText = el.type === 'text';
+
+  if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    focusCell(rowIdx - 1, colIdx);
+  } else if (e.key === 'ArrowDown' || e.key === 'Enter') {
+    e.preventDefault();
+    focusCell(rowIdx + 1, colIdx);
+  } else if (e.key === 'ArrowLeft') {
+    // 日付欄は年/月/日の間をカーソルが移動するので、そちらを優先する
+    if (!isText) return;
+    if (el.selectionStart === 0 && el.selectionEnd === 0 && colIdx > FIRST_COL) {
+      e.preventDefault();
+      focusCell(rowIdx, colIdx - 1);
+    }
+  } else if (e.key === 'ArrowRight') {
+    if (!isText) return;
+    const end = el.value.length;
+    if (el.selectionStart === end && el.selectionEnd === end && colIdx < LAST_COL) {
+      e.preventDefault();
+      focusCell(rowIdx, colIdx + 1);
+    }
+  }
+});
+
+function refresh() {
+  const has = items.length > 0;
+  bar.classList.toggle('hide', !has);
+  $('hint').classList.toggle('hide', !has);
+  cols.classList.toggle('hide', !has);
+  const done = items.filter(i => validate(i).name).length;
+  $('count').textContent = `${items.length} 件読み込み中（入力済み ${done} 件）`;
+  $('zip').disabled = !has || done !== items.length;
+  $('doctype').classList.toggle('bad', !!charError(trimBoth($('doctype').value)));
+}
+
+// ===== ZIP出力 =====
+$('zip').onclick = async () => {
+  // 推定のまま一度も見ていない欄が残っていたら、そこで一度止める。
+  // 金額を1件間違えると税務書類の不備になるので、黙って通さない。
+  const left = items.filter(i => i.guess.date || i.guess.amount).length;
+  if (left && !confirm(
+      `自動で読み取ったまま、まだ確認していない欄が ${left} 件あります。\n` +
+      `読み取りは必ず当たるわけではありません。このまま続けますか？`)) {
+    return;
+  }
+  const btn = $('zip');
+  btn.disabled = true; btn.textContent = '作成中…';
+  try {
+    const zip = new JSZip();
+    const used = new Map();
+    for (const item of items) {
+      let name = validate(item).name;
+      // 同名になった場合は連番を足して上書きを防ぐ
+      if (used.has(name)) {
+        const n = used.get(name) + 1;
+        used.set(name, n);
+        name = name.replace(/\.pdf$/i, `_${n}.pdf`);
+      } else {
+        used.set(name, 1);
       }
-      .bar label {
-        font-size: 13px;
-        color: var(--ink-soft);
-      }
-      .bar input[type="text"] {
-        border: 1px solid var(--line);
-        border-radius: 6px;
-        padding: 7px 10px;
-        font-size: 14px;
-        font-family: inherit;
-        width: 130px;
-      }
-      .count {
-        font-size: 13px;
-        color: var(--ink-soft);
-        margin-right: auto;
-      }
-      button {
-        font-family: inherit;
-        font-size: 14px;
-        border-radius: 8px;
-        cursor: pointer;
-        border: 1px solid transparent;
-        padding: 9px 18px;
-      }
-      .primary {
-        background: var(--indigo);
-        color: #fff;
-      }
-      .primary:disabled {
-        background: #c6c4e6;
-        cursor: not-allowed;
-      }
-      .ghost {
-        background: #fff;
-        border-color: var(--line);
-        color: var(--ink);
-      }
-      .ghost:hover {
-        border-color: var(--moss);
-      }
-
-      .cols {
-        display: grid;
-        grid-template-columns: 1fr 420px;
-        gap: 24px;
-        align-items: start;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13.5px;
-      }
-      th {
-        text-align: left;
-        font-weight: 500;
-        color: var(--ink-soft);
-        font-size: 12px;
-        padding: 6px 8px;
-        border-bottom: 1px solid var(--line);
-        white-space: nowrap;
-      }
-      td {
-        padding: 8px;
-        border-bottom: 1px solid var(--line);
-        vertical-align: middle;
-      }
-      td input {
-        border: 1px solid var(--line);
-        border-radius: 6px;
-        padding: 6px 8px;
-        font-size: 13.5px;
-        font-family: inherit;
-        width: 100%;
-      }
-      td input:focus {
-        outline: 2px solid var(--indigo);
-        outline-offset: -1px;
-        border-color: transparent;
-      }
-      td input.bad,
-      .bar input.bad {
-        border-color: var(--danger);
-        background: #fdf3f3;
-      }
-      .src {
-        max-width: 150px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: var(--ink-soft);
-        font-size: 12.5px;
-      }
-      .out {
-        font-size: 12px;
-        color: var(--moss);
-        word-break: break-all;
-        line-height: 1.5;
-      }
-      .out.ng {
-        color: var(--danger);
-      }
-      .w-date {
-        width: 140px;
-      }
-      .w-amt {
-        width: 110px;
-      }
-      .mini {
-        background: none;
-        border: none;
-        color: var(--indigo);
-        font-size: 12px;
-        padding: 2px 4px;
-        text-decoration: underline;
-      }
-      .mini.del {
-        color: var(--danger);
-      }
-
-      #pane {
-        position: sticky;
-        top: 20px;
-      }
-      #pane h2 {
-        font-size: 13px;
-        color: var(--ink-soft);
-        font-weight: 500;
-        margin: 0 0 8px;
-      }
-      #frame {
-        width: 100%;
-        height: 560px;
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        background: var(--paper-2);
-      }
-      #empty {
-        height: 560px;
-        border: 1px dashed var(--line);
-        border-radius: 10px;
-        background: var(--paper-2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--ink-soft);
-        font-size: 13px;
-      }
-      .hide {
-        display: none !important;
-      }
-      .hint {
-        font-size: 12.5px;
-        color: var(--ink-soft);
-        margin: -4px 0 16px;
-      }
-      .hint kbd {
-        border: 1px solid var(--line);
-        border-bottom-width: 2px;
-        border-radius: 4px;
-        padding: 0 5px;
-        font-family: inherit;
-        font-size: 11.5px;
-        background: var(--paper-2);
-      }
-      footer {
-        margin-top: 48px;
-        padding-top: 20px;
-        border-top: 1px solid var(--line);
-        font-size: 12.5px;
-        color: var(--ink-soft);
-      }
-      footer a {
-        color: var(--indigo);
-      }
-      @media (max-width: 900px) {
-        .cols {
-          grid-template-columns: 1fr;
-        }
-        #pane {
-          position: static;
-        }
-        #frame,
-        #empty {
-          height: 420px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <h1>請求書PDF 一括リネーム</h1>
-      <p class="sub">
-        取引年月日・取引先・金額をファイル名に付けて、まとめてZIPで書き出します。
-      </p>
-
-      <div class="trust">
-        <b>このページは、選んだPDFをどこにも送信しません。</b><br />
-        ファイルの読み込みもリネームもZIP化も、すべてお使いのブラウザの中だけで行われます。<br />
-        確かめ方：<code>F12</code>
-        で開発者ツールを開き、ネットワークタブを見ながら操作してください。ファイルの通信は発生しません。
-      </div>
-
-      <div class="notice">
-        検索要件を満たすファイル名を付けるための補助ツールです。電子帳簿保存法への対応が完了することを保証するものではありません。真実性の確保（事務処理規程やタイムスタンプ等）は別途ご確認ください。命名の順序や区切り方は社内ルールに合わせてください。
-      </div>
-
-      <div id="drop" tabindex="0" role="button" aria-label="PDFファイルを選択">
-        <strong>PDFをここにドラッグ＆ドロップ</strong>
-        <span>クリックしてファイルを選ぶこともできます（複数選択可）</span>
-      </div>
-      <input type="file" id="picker" accept="application/pdf" multiple hidden />
-
-      <div class="bar hide" id="bar">
-        <span class="count" id="count"></span>
-        <label
-          >書類の種類
-          <input type="text" id="doctype" value="請求書" placeholder="任意" />
-        </label>
-        <button class="ghost" id="clear">すべて削除</button>
-        <button class="primary" id="zip" disabled>リネームしてZIPで保存</button>
-      </div>
-
-      <p class="hint hide" id="hint">
-        入力欄では <kbd>↑</kbd><kbd>↓</kbd> で上下の行へ、<kbd>←</kbd
-        ><kbd>→</kbd> で左右の項目へ移動できます。<kbd>Enter</kbd>
-        でも下の行に進みます。
-      </p>
-
-      <div class="cols hide" id="cols">
-        <div>
-          <table>
-            <thead>
-              <tr>
-                <th>元のファイル名</th>
-                <th>取引年月日</th>
-                <th>取引先</th>
-                <th>金額</th>
-                <th>新しいファイル名</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="rows"></tbody>
-          </table>
-        </div>
-        <div id="pane">
-          <h2>プレビュー</h2>
-          <iframe id="frame" class="hide" title="PDFプレビュー"></iframe>
-          <div id="empty">「表示」を押すとPDFの中身が出ます</div>
-        </div>
-      </div>
-
-      <footer>
-        作成：楽するプログラマSさん ／
-        ソースはこのページの表示ソースがすべてです。<br />
-        大量のPDFを一度に処理するとブラウザのメモリを消費します。100件を超える場合は分けて実行してください。
-      </footer>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script>
-      // ===== 状態 =====
-      // items: 読み込んだPDFの一覧。file本体とユーザー入力値だけを持つ。
-      // 外部に送信する処理はこのファイル内に一切存在しない。
-      let items = [];
-      let seq = 0;
-
-      const $ = (id) => document.getElementById(id);
-      const drop = $("drop"),
-        picker = $("picker"),
-        rows = $("rows");
-      const bar = $("bar"),
-        cols = $("cols"),
-        frame = $("frame"),
-        empty = $("empty");
-
-      // ===== ファイル受け取り =====
-      drop.addEventListener("click", () => picker.click());
-      drop.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          picker.click();
-        }
-      });
-      picker.addEventListener("change", (e) => {
-        addFiles(e.target.files);
-        picker.value = "";
-      });
-
-      ["dragenter", "dragover"].forEach((ev) =>
-        drop.addEventListener(ev, (e) => {
-          e.preventDefault();
-          drop.classList.add("over");
-        }),
-      );
-      ["dragleave", "drop"].forEach((ev) =>
-        drop.addEventListener(ev, (e) => {
-          e.preventDefault();
-          drop.classList.remove("over");
-        }),
-      );
-      drop.addEventListener("drop", (e) => addFiles(e.dataTransfer.files));
-
-      function addFiles(list) {
-        const pdfs = [...list].filter(
-          (f) => f.type === "application/pdf" || /\.pdf$/i.test(f.name),
-        );
-        if (!pdfs.length) {
-          alert("PDFファイルが見つかりませんでした。");
-          return;
-        }
-        pdfs.forEach((file) => {
-          const item = {
-            id: ++seq,
-            file,
-            url: null,
-            date: "",
-            partner: "",
-            amount: "",
-          };
-          items.push(item);
-          rows.appendChild(buildRow(item));
-        });
-        refresh();
-      }
-
-      // ===== 1行分のDOMを作る =====
-      // 入力のたびに全体を再描画すると入力欄からフォーカスが外れるので、
-      // 行は一度だけ作り、以降は必要なセルだけ書き換える。
-      function buildRow(item) {
-        const tr = document.createElement("tr");
-
-        const tdSrc = document.createElement("td");
-        tdSrc.className = "src";
-        tdSrc.textContent = item.file.name;
-        tdSrc.title = item.file.name;
-
-        const tdDate = document.createElement("td");
-        const inDate = document.createElement("input");
-        inDate.type = "text";
-        inDate.className = "w-date";
-        inDate.inputMode = "numeric";
-        inDate.maxLength = 8;
-        inDate.placeholder = "20260728";
-        tdDate.appendChild(inDate);
-
-        const tdPartner = document.createElement("td");
-        const inPartner = document.createElement("input");
-        inPartner.type = "text";
-        inPartner.placeholder = "株式会社○○";
-        tdPartner.appendChild(inPartner);
-
-        const tdAmount = document.createElement("td");
-        const inAmount = document.createElement("input");
-        inAmount.type = "text";
-        inAmount.className = "w-amt";
-        inAmount.inputMode = "numeric";
-        inAmount.placeholder = "110000";
-        tdAmount.appendChild(inAmount);
-
-        const tdOut = document.createElement("td");
-        const out = document.createElement("div");
-        out.className = "out";
-        tdOut.appendChild(out);
-
-        const tdAct = document.createElement("td");
-        const btnView = document.createElement("button");
-        btnView.className = "mini";
-        btnView.textContent = "表示";
-        btnView.onclick = () => preview(item);
-        const btnDel = document.createElement("button");
-        btnDel.className = "mini del";
-        btnDel.textContent = "削除";
-        btnDel.onclick = () => remove(item, tr);
-        tdAct.append(btnView, btnDel);
-
-        const fields = { date: inDate, partner: inPartner, amount: inAmount };
-
-        const sync = () => {
-          // 日付と金額は数字だけを残す。ハイフン付きで貼り付けても通るようにする
-          const d = inDate.value.replace(/[^0-9]/g, "").slice(0, 8);
-          if (inDate.value !== d) inDate.value = d;
-          const a = inAmount.value.replace(/[^0-9]/g, "");
-          if (inAmount.value !== a) inAmount.value = a;
-          item.date = d;
-          item.partner = inPartner.value;
-          item.amount = a;
-          paint();
-          refresh();
-        };
-
-        const paint = () => {
-          const r = validate(item);
-          out.textContent = r.name || r.msg;
-          out.classList.toggle("ng", !r.name);
-          Object.keys(fields).forEach((key) =>
-            fields[key].classList.toggle("bad", r.field === key),
-          );
-        };
-        item.paint = paint;
-
-        [inDate, inPartner, inAmount].forEach((el) =>
-          el.addEventListener("input", sync),
-        );
-
-        paint();
-        tr.append(tdSrc, tdDate, tdPartner, tdAmount, tdOut, tdAct);
-        return tr;
-      }
-
-      // ===== 入力チェックとファイル名の組み立て =====
-      // 問題がなければ {name}、あれば {msg, field} を返す。
-      // 使えない文字を黙って別の文字に置き換えると、取引先名が知らないうちに
-      // 変わってしまい、あとで検索できなくなる。だから置換せずエラーで止める。
-      const BAD_CHARS = /[\\\/:\*\?"<>\|]/;
-      const CTRL_CHARS = /[\x00-\x1f\x7f]/;
-
-      function validate(item) {
-        const partner = trimBoth(item.partner);
-        const doctype = trimBoth($("doctype").value);
-
-        if (!item.date && !partner && !item.amount) {
-          return { msg: "3項目を入力してください" };
-        }
-        if (item.date.length !== 8) {
-          return {
-            msg: "取引年月日は8桁で入力してください（例 20260728）",
-            field: "date",
-          };
-        }
-        if (!isRealDate(item.date)) {
-          return { msg: "その日付は存在しません", field: "date" };
-        }
-        if (!partner) {
-          return { msg: "取引先を入力してください", field: "partner" };
-        }
-        const partnerError = charError(partner);
-        if (partnerError) {
-          return { msg: "取引先" + partnerError, field: "partner" };
-        }
-        if (!item.amount) {
-          return { msg: "金額を入力してください", field: "amount" };
-        }
-        const doctypeError = doctype && charError(doctype);
-        if (doctypeError) {
-          return { msg: "書類の種類" + doctypeError, field: "doctype" };
-        }
-
-        const parts = [item.date, partner, item.amount];
-        if (doctype) parts.push(doctype);
-        return { name: parts.join("_") + ".pdf" };
-      }
-
-      // ファイル名として成立しない文字が混じっていないか調べる
-      function charError(s) {
-        const bad = s.match(BAD_CHARS);
-        if (bad)
-          return `に「${bad[0]}」は使えません（ \\ / : * ? " < > | は不可）`;
-        if (CTRL_CHARS.test(s)) return "に使えない制御文字が含まれています";
-        if (/[.]$/.test(s)) return "の末尾にピリオドは使えません";
-        return "";
-      }
-
-      // 半角・全角どちらの空白も前後から取り除く
-      function trimBoth(s) {
-        return s.replace(/^[\s\u3000]+|[\s\u3000]+$/g, "");
-      }
-
-      // 20260231 のような存在しない日付をはじく
-      function isRealDate(s) {
-        const y = +s.slice(0, 4),
-          m = +s.slice(4, 6),
-          d = +s.slice(6, 8);
-        const dt = new Date(y, m - 1, d);
-        return (
-          dt.getFullYear() === y &&
-          dt.getMonth() === m - 1 &&
-          dt.getDate() === d
-        );
-      }
-
-      // ===== プレビュー =====
-      // blob URLをiframeに渡すだけ。ブラウザ内蔵のPDFビューアが表示してくれる。
-      function preview(item) {
-        if (!item.url) item.url = URL.createObjectURL(item.file);
-        frame.src = item.url;
-        frame.classList.remove("hide");
-        empty.classList.add("hide");
-      }
-
-      function remove(item, tr) {
-        if (item.url) URL.revokeObjectURL(item.url);
-        items = items.filter((x) => x.id !== item.id);
-        tr.remove();
-        refresh();
-      }
-
-      $("clear").onclick = () => {
-        if (
-          items.length &&
-          !confirm("読み込んだファイルをすべて取り消します。よろしいですか？")
-        )
-          return;
-        items.forEach((i) => i.url && URL.revokeObjectURL(i.url));
-        items = [];
-        rows.innerHTML = "";
-        frame.src = "about:blank";
-        frame.classList.add("hide");
-        empty.classList.remove("hide");
-        refresh();
-      };
-
-      // 書類の種類は全行のファイル名に効くので、変えたら全部検査し直す
-      $("doctype").addEventListener("input", () => {
-        items.forEach((i) => i.paint());
-        refresh();
-      });
-
-      // ===== キーボードでのセル移動 =====
-      // 入力欄がある列は 1=取引年月日 / 2=取引先 / 3=金額。
-      // 上下は常に行移動。左右はカーソルが端にあるときだけ列移動する
-      // （文字の途中では、通常どおりカーソルが動くほうが自然なため）。
-      const FIRST_COL = 1,
-        LAST_COL = 3;
-
-      function focusCell(rowIdx, colIdx) {
-        const tr = rows.children[rowIdx];
-        if (!tr) return;
-        const input =
-          tr.children[colIdx] && tr.children[colIdx].querySelector("input");
-        if (!input) return;
-        input.focus();
-        if (input.type === "text") input.select();
-      }
-
-      rows.addEventListener("keydown", (e) => {
-        const el = e.target;
-        if (el.tagName !== "INPUT") return;
-
-        const tr = el.closest("tr");
-        const td = el.closest("td");
-        const rowIdx = [...rows.children].indexOf(tr);
-        const colIdx = [...tr.children].indexOf(td);
-        const isText = el.type === "text";
-
-        if (e.key === "ArrowUp") {
-          e.preventDefault();
-          focusCell(rowIdx - 1, colIdx);
-        } else if (e.key === "ArrowDown" || e.key === "Enter") {
-          e.preventDefault();
-          focusCell(rowIdx + 1, colIdx);
-        } else if (e.key === "ArrowLeft") {
-          // 日付欄は年/月/日の間をカーソルが移動するので、そちらを優先する
-          if (!isText) return;
-          if (
-            el.selectionStart === 0 &&
-            el.selectionEnd === 0 &&
-            colIdx > FIRST_COL
-          ) {
-            e.preventDefault();
-            focusCell(rowIdx, colIdx - 1);
-          }
-        } else if (e.key === "ArrowRight") {
-          if (!isText) return;
-          const end = el.value.length;
-          if (
-            el.selectionStart === end &&
-            el.selectionEnd === end &&
-            colIdx < LAST_COL
-          ) {
-            e.preventDefault();
-            focusCell(rowIdx, colIdx + 1);
-          }
-        }
-      });
-
-      function refresh() {
-        const has = items.length > 0;
-        bar.classList.toggle("hide", !has);
-        $("hint").classList.toggle("hide", !has);
-        cols.classList.toggle("hide", !has);
-        const done = items.filter((i) => validate(i).name).length;
-        $("count").textContent =
-          `${items.length} 件読み込み中（入力済み ${done} 件）`;
-        $("zip").disabled = !has || done !== items.length;
-        $("doctype").classList.toggle(
-          "bad",
-          !!charError(trimBoth($("doctype").value)),
-        );
-      }
-
-      // ===== ZIP出力 =====
-      $("zip").onclick = async () => {
-        const btn = $("zip");
-        btn.disabled = true;
-        btn.textContent = "作成中…";
-        try {
-          const zip = new JSZip();
-          const used = new Map();
-          for (const item of items) {
-            let name = validate(item).name;
-            // 同名になった場合は連番を足して上書きを防ぐ
-            if (used.has(name)) {
-              const n = used.get(name) + 1;
-              used.set(name, n);
-              name = name.replace(/\.pdf$/i, `_${n}.pdf`);
-            } else {
-              used.set(name, 1);
-            }
-            zip.file(name, item.file);
-          }
-          const blob = await zip.generateAsync({ type: "blob" });
-          const a = document.createElement("a");
-          a.href = URL.createObjectURL(blob);
-          a.download = `renamed_${new Date().toISOString().slice(0, 10).replace(/-/g, "")}.zip`;
-          a.click();
-          setTimeout(() => URL.revokeObjectURL(a.href), 10000);
-        } catch (e) {
-          alert(
-            "ZIPの作成に失敗しました。件数を減らして試してください。\n" +
-              e.message,
-          );
-        } finally {
-          btn.textContent = "リネームしてZIPで保存";
-          refresh();
-        }
-      };
-    </script>
-  </body>
+      zip.file(name, item.file);
+    }
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `renamed_${new Date().toISOString().slice(0,10).replace(/-/g,'')}.zip`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  } catch (e) {
+    alert('ZIPの作成に失敗しました。件数を減らして試してください。\n' + e.message);
+  } finally {
+    btn.textContent = 'リネームしてZIPで保存';
+    refresh();
+  }
+};
+</script>
+</body>
 </html>
